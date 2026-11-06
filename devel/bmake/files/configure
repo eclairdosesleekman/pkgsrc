@@ -6315,6 +6315,11 @@ You can now run
 to produce a fully functional bmake.
 
 EOF
+	# This branch skips config.status. Avoid the Autoconf EXIT trap,
+	# which serializes the shell environment and runs cleanup commands
+	# that may hang on MINIX. The files needed by make-bootstrap.sh
+	# have already been generated above.
+	trap - 0
 	exit 0
 	;;
 esac
