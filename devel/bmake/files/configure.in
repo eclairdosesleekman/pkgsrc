@@ -401,7 +401,77 @@ if test -n "$defshell_path"; then
 fi
 if test -n "$DEFSHELL_INDEX"; then
        AC_DEFINE_UNQUOTED(DEFSHELL_INDEX, $DEFSHELL_INDEX, Shell spec to use by default)
-fi        
+fi
+
+# MINIX cannot reliably complete Autoconf's cache and config.status
+# finalization during the native bmake bootstrap.  Generate the small set
+# of files needed by make-bootstrap.sh here and leave configure immediately.
+case "$OS" in
+Minix|MINIX|minix)
+	# Use the same defaults that Autoconf applies just before config.status.
+	test "x$prefix" = xNONE && prefix=$ac_default_prefix
+	test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+	DEFS=-DHAVE_CONFIG_H
+	AWK=${AWK:-awk}
+
+	bm_outfiles="Makefile.config unit-tests/Makefile.config make-bootstrap.sh"
+	if test "$use_makefile" = yes; then
+		bm_outfiles="makefile $bm_outfiles"
+	fi
+
+	# Normalize replacement objects exactly as Autoconf does before
+	# substituting LIBOBJS into make-bootstrap.sh.
+	ac_libobjs=
+	for ac_i in : $LIBOBJS; do
+		test "x$ac_i" = x: && continue
+		ac_script='s/\\$U\\././;s/\\.o$//;s/\\.obj$//'
+		ac_i=`$as_echo "$ac_i" | sed "$ac_script"`
+		as_fn_append ac_libobjs " \${LIBOBJDIR}$ac_i\\$U.$ac_objext"
+	done
+	LIBOBJS=$ac_libobjs
+
+	cp confdefs.h config.h || {
+		echo "$as_me: error: cannot create config.h" >&2
+		exit 1
+	}
+	export _MAKE_VERSION prefix exec_prefix srcdir CC CFLAGS CPPFLAGS DEFS
+	export LDFLAGS LIBOBJS LIBS AWK INSTALL GCC
+	export machine force_machine machine_arch mksrc default_sys_path
+	export use_meta use_filemon filemon_h bmake_path_max diff_u
+
+	for ac_output in $bm_outfiles; do
+		case $ac_output in
+		makefile) ac_template=makefile.in ;;
+		*) ac_template=$ac_output.in ;;
+		esac
+		case $ac_output in
+		*/*) mkdir -p "${ac_output%/*}" || {
+			echo "$as_me: error: cannot create directory for $ac_output" >&2
+			exit 1
+		} ;;
+		esac
+		echo "$as_me: creating $ac_output" >&6
+		"$AWK" -f "$srcdir/configure-subst.awk" "$srcdir/$ac_template" >"$ac_output" || {
+			echo "$as_me: error: cannot create $ac_output" >&2
+			exit 1
+		}
+	done
+
+	cat <<EOF
+
+MINIX bootstrap configuration complete.
+
+You can now run
+
+	sh ./make-bootstrap.sh
+
+to produce a fully functional bmake.
+
+EOF
+	exit 0
+	;;
+esac
+        
 dnl
 AC_SUBST(machine)
 AC_SUBST(force_machine)
