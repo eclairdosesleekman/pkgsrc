@@ -582,14 +582,55 @@ AH_BOTTOM([
 #endif
 ])
 
-AC_CONFIG_FILES([Makefile])
-AC_OUTPUT
-
-dnl MINIX's shell may hang while running Autoconf's EXIT trap, which
-dnl serializes the configure environment into config.log.  At this
-dnl point config.status has completed and all requested outputs exist.
+dnl MINIX's shell cannot complete Autoconf's cache/config.status finalization
+dnl reliably during the native bootstrap.  Generate the small set of files
+dnl needed by libnbcompat directly and exit before that finalization.
 case $host_os in
 minix*)
+	# Match Autoconf's defaults and object-name normalization.
+	test "x$prefix" = xNONE && prefix=$ac_default_prefix
+	test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+	DEFS=-DHAVE_CONFIG_H
+	AWK=${AWK:-awk}
+
+	ac_libobjs=
+	for ac_i in : $LIBOBJS; do
+		test "x$ac_i" = x: && continue
+		ac_script='s/\\$U\\././;s/\\.o$//;s/\\.obj$//'
+		ac_i=`$as_echo "$ac_i" | sed "$ac_script"`
+		as_fn_append ac_libobjs " \${LIBOBJDIR}$ac_i\\$U.$ac_objext"
+	done
+	LIBOBJS=$ac_libobjs
+
+	export srcdir prefix CC CFLAGS CPPFLAGS DEFS INSTALL LDFLAGS
+	export AWK AR RANLIB LIBOBJS WITH_DB INCLUDES
+
+	cp confdefs.h nbcompat/config.h || {
+		echo "$as_me: error: cannot create nbcompat/config.h" >&2
+		exit 1
+	}
+	cat >>nbcompat/config.h <<'EOF_MINIX_CONFIG'
+/* NBCOMPAT template section follows. */
+
+#ifndef HAVE___ATTRIBUTE__
+# define __attribute__(x)
+#endif
+EOF_MINIX_CONFIG
+
+	"$AWK" -f "$srcdir/configure-subst.awk" "$srcdir/Makefile.in" >Makefile || {
+		echo "$as_me: error: cannot create Makefile" >&2
+		exit 1
+	}
+
+	echo "$as_me: creating nbcompat/config.h" >&6
+	echo "$as_me: creating Makefile" >&6
+	echo "MINIX libnbcompat configuration complete." >&6
+
+	# The generated files are ready; skip Autoconf's generic finalization.
 	trap - 0
+	exit 0
 	;;
 esac
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
