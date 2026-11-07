@@ -439,6 +439,14 @@ AC_ARG_WITH([openssl],
   AS_HELP_STRING([--without-openssl], [Don't build support for mtree and xar hashes through openssl]))
 case "$host_os" in
   *darwin* ) with_openssl=no ;;
+  minix*)
+    # OpenSSL's default CRYPTO_CHECK expands and links all of archive_digest.c.
+    # That heavyweight probe can wedge MINIX 3; leave it opt-in there.
+    if test "x$with_openssl" = "x"; then
+      with_openssl=no
+      AC_MSG_NOTICE([OpenSSL autodetection disabled on MINIX; use --with-openssl to opt in])
+    fi
+    ;;
 esac
 
 AC_ARG_WITH([xml2],
