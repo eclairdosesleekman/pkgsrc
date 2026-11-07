@@ -1099,7 +1099,10 @@ main(int argc, char **argv)
 ])
 
 case "$host_os" in
-  *mingw* | *cygwin* | *msys* | minix*)
+  *mingw* | *cygwin* | *msys*)
+	;;
+  minix*)
+	AC_MSG_NOTICE([skipping native libc crypto probes on MINIX])
 	;;
   *)
 	CRYPTO_CHECK(MD5, LIBC, md5)
