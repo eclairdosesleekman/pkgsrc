@@ -584,3 +584,12 @@ AH_BOTTOM([
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
+
+dnl MINIX's shell may hang while running Autoconf's EXIT trap, which
+dnl serializes the configure environment into config.log.  At this
+dnl point config.status has completed and all requested outputs exist.
+case $host_os in
+minix*)
+	trap - 0
+	;;
+esac
