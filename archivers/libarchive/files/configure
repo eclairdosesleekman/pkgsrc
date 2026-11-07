@@ -19362,6 +19362,13 @@ fi
 
 
 
+
+case "$host_os" in
+  minix*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping all libarchive crypto provider probes on MINIX" >&5
+$as_echo "$as_me: skipping all libarchive crypto provider probes on MINIX" >&6;}
+    ;;
+  *)
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)
 	;;
@@ -21869,6 +21876,9 @@ rm -f core conftest.err conftest.$ac_objext \
 	;;
 esac
 
+
+    ;;
+esac
 # Ensure test directories are present if building out-of-tree
 ac_config_commands="$ac_config_commands mkdirs"
 

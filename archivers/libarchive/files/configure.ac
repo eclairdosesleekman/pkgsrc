@@ -1107,6 +1107,12 @@ main(int argc, char **argv)
 ])
 
 case "$host_os" in
+  minix*)
+    AC_MSG_NOTICE([skipping all libarchive crypto provider probes on MINIX])
+    ;;
+  *)
+
+case "$host_os" in
   *mingw* | *cygwin* | *msys*)
 	;;
   minix*)
@@ -1241,6 +1247,9 @@ case "$host_os" in
 	CRYPTO_CHECK_WIN(SHA384, CALG_SHA_384)
 	CRYPTO_CHECK_WIN(SHA512, CALG_SHA_512)
 	;;
+esac
+
+    ;;
 esac
 
 # Ensure test directories are present if building out-of-tree
