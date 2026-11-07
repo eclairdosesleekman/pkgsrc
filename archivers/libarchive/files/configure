@@ -19354,8 +19354,12 @@ fi
 
 
 case "$host_os" in
-  *mingw* | *cygwin* | *msys* | minix*)
+  *mingw* | *cygwin* | *msys*)
 	;;
+  minix*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping native libc crypto probes on MINIX" >&5
+$as_echo "$as_me: skipping native libc crypto probes on MINIX" >&6;}
+    ;;
   *)
 
   if test "$found_MD5" != yes; then
