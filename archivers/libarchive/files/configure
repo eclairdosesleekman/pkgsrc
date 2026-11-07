@@ -19362,6 +19362,13 @@ fi
 
 
 
+
+case "$host_os" in
+  minix*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping all libarchive crypto provider probes on MINIX" >&5
+$as_echo "$as_me: skipping all libarchive crypto provider probes on MINIX" >&6;}
+    ;;
+  *)
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)
 	;;
@@ -21674,13 +21681,6 @@ fi
 	;;
 esac
 
-
-case "$host_os" in
-  minix*)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping all libarchive crypto provider probes on MINIX" >&5
-$as_echo "$as_me: skipping all libarchive crypto provider probes on MINIX" >&6;}
-    ;;
-  *)
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)
 
