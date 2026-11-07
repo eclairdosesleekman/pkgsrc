@@ -20146,7 +20146,9 @@ rm -f core conftest.err conftest.$ac_objext \
 	;;
 esac
 
-if test "x$with_cng" != "xno"; then
+case "$host_os" in
+  *mingw* | *cygwin* | *msys*)
+    if test "x$with_cng" != "xno"; then
     for ac_header in bcrypt.h
 do :
   ac_fn_c_check_header_compile "$LINENO" "bcrypt.h" "ac_cv_header_bcrypt_h" "#ifdef HAVE_WINDOWS_H
@@ -20165,7 +20167,9 @@ fi
 
 done
 
-fi
+    fi
+    ;;
+esac
 
 if test "x$with_mbedtls" = "xyes"; then
     for ac_header in mbedtls/aes.h mbedtls/md.h mbedtls/pkcs5.h
