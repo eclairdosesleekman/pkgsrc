@@ -107,6 +107,13 @@ AC_PROG_CC_C99
 AM_PROG_CC_C_O
 AC_USE_SYSTEM_EXTENSIONS
 AC_LIBTOOL_WIN32_DLL
+
+dnl MINIX's conservative command length is half its 16 KiB ARG_MAX.
+dnl This cache variable prevents Libtool's exponential size probe.
+case "$build_os" in
+  minix*) lt_cv_sys_max_cmd_len=8192 ;;
+esac
+
 AC_PROG_LIBTOOL
 AC_CHECK_TOOL([STRIP],[strip])
 AC_PROG_MKDIR_P
