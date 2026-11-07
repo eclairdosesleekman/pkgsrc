@@ -2144,7 +2144,17 @@ Job_CatchOutput(void)
 	case 0:
 	    Punt("unexpected eof on token pipe");
 	case -1:
-	    Punt("token pipe read: %s", strerror(errno));
+#ifdef __minix
+	    /*
+	     * MINIX 3 poll(2) can report a pipe as readable even though
+	     * the subsequent non-blocking read returns EAGAIN. Treat this
+	     * as a stale readiness notification and let the next poll wait
+	     * for data. Other read errors remain fatal.
+	     */
+	    if (errno != EAGAIN)
+#endif
+		Punt("token pipe read: %s", strerror(errno));
+	    break;
 	case 1:
 	    if (token == DO_JOB_RESUME[0])
 		/* Complete relay requested from our SIGCONT handler */
