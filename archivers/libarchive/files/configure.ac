@@ -1125,15 +1125,21 @@ case "$host_os" in
 	;;
 esac
 
-if test "x$with_cng" != "xno"; then
-    AC_CHECK_HEADERS([bcrypt.h],[
-        LIBS="$LIBS -lbcrypt"
-    ],[],
-    [[#ifdef HAVE_WINDOWS_H
-    # include <windows.h>
-    #endif
-    ]])
-fi
+# CNG is a Windows-only crypto provider. Do not probe its SDK header
+# on other hosts (in particular MINIX), even when --without-cng is omitted.
+case "$host_os" in
+  *mingw* | *cygwin* | *msys*)
+    if test "x$with_cng" != "xno"; then
+        AC_CHECK_HEADERS([bcrypt.h],[
+            LIBS="$LIBS -lbcrypt"
+        ],[],
+        [[#ifdef HAVE_WINDOWS_H
+        # include <windows.h>
+        #endif
+        ]])
+    fi
+    ;;
+esac
 
 if test "x$with_mbedtls" = "xyes"; then
     AC_CHECK_HEADERS([mbedtls/aes.h mbedtls/md.h mbedtls/pkcs5.h])
