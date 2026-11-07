@@ -19356,6 +19356,10 @@ fi
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)
 	;;
+  minix*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping native libc crypto probes on MINIX" >&5
+$as_echo "$as_me: skipping native libc crypto probes on MINIX" >&6;}
+    ;;
   *)
 
   if test "$found_MD5" != yes; then
@@ -21357,6 +21361,10 @@ fi
 
 # Probe libmd AFTER OpenSSL/libcrypto.
 # The two are incompatible and OpenSSL is more complete.
+case "$host_os" in
+  minix*)
+    ;;
+  *)
 for ac_header in md5.h ripemd.h sha.h sha256.h sha512.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -21649,6 +21657,9 @@ rm -f core conftest.err conftest.$ac_objext \
 if test "x$found_LIBMD" != "xyes"; then
   LIBS=$saved_LIBS
 fi
+
+	;;
+esac
 
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)

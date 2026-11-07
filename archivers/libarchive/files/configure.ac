@@ -1101,6 +1101,9 @@ main(int argc, char **argv)
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)
 	;;
+  minix*)
+	AC_MSG_NOTICE([skipping native libc crypto probes on MINIX])
+	;;
   *)
 	CRYPTO_CHECK(MD5, LIBC, md5)
 	CRYPTO_CHECK(MD5, LIBSYSTEM, md5)
@@ -1195,6 +1198,13 @@ fi
 
 # Probe libmd AFTER OpenSSL/libcrypto.
 # The two are incompatible and OpenSSL is more complete.
+# Native crypto probes compile archive_digest.c as one large translation
+# unit. Avoid these probes on MINIX 3, where the test can wedge the VM.
+case "$host_os" in
+  minix*)
+	AC_MSG_NOTICE([skipping native libmd crypto probes on MINIX])
+	;;
+  *)
 AC_CHECK_HEADERS([md5.h ripemd.h sha.h sha256.h sha512.h])
 saved_LIBS=$LIBS
 AC_CHECK_LIB(md,MD5Init)
@@ -1206,6 +1216,8 @@ CRYPTO_CHECK(SHA512, LIBMD, sha512)
 if test "x$found_LIBMD" != "xyes"; then
   LIBS=$saved_LIBS
 fi
+	;;
+esac
 
 case "$host_os" in
   *mingw* | *cygwin* | *msys*)
