@@ -114,6 +114,8 @@ case "$build_os" in
   minix*) lt_cv_sys_max_cmd_len=8192 ;;
 esac
 
+dnl Keep the generated configure script's MINIX linker branch synchronized:
+dnl MINIX skips Libtool's GNU ld introspection and uses NetBSD ELF -shared.
 AC_PROG_LIBTOOL
 AC_CHECK_TOOL([STRIP],[strip])
 AC_PROG_MKDIR_P
