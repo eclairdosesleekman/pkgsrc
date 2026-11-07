@@ -10189,7 +10189,9 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
     esac
   fi
 
-  if test yes = "$lt_use_gnu_ld_interface"; then
+  # MINIX 3's GNU ld --help probe can wedge the system. Use its
+# NetBSD-derived ELF linker interface instead of probing GNU ld.
+if test yes = "$lt_use_gnu_ld_interface" && test minix != "$host_os"; then
     # If archive_cmds runs LD, not CC, wlarc should be empty
     wlarc='$wl'
 
@@ -10503,6 +10505,15 @@ _LT_EOF
   else
     # PORTME fill in a description of your system's linker (not GNU ld)
     case $host_os in
+    minix*)
+      # MINIX uses the NetBSD ELF linker interface for shared objects.
+      # The generic GNU ld introspection above is unsafe on MINIX 3.
+      archive_cmds='$LD -shared -o $lib $libobjs $deplibs $linker_flags'
+      hardcode_libdir_flag_spec='-R$libdir'
+      hardcode_direct=yes
+      hardcode_shlibpath_var=no
+      ;;
+
     aix3*)
       allow_undefined_flag=unsupported
       always_export_symbols=yes
