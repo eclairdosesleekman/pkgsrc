@@ -596,9 +596,9 @@ minix*)
 	ac_libobjs=
 	for ac_i in : $LIBOBJS; do
 		test "x$ac_i" = x: && continue
-		ac_script='s/\\$U\\././;s/\\.o$//;s/\\.obj$//'
+		ac_script='s/\$U\././;s/\.o$//;s/\.obj$//'
 		ac_i=`$as_echo "$ac_i" | sed "$ac_script"`
-		as_fn_append ac_libobjs " \${LIBOBJDIR}$ac_i\\$U.$ac_objext"
+		as_fn_append ac_libobjs " \${LIBOBJDIR}$ac_i\$U.$ac_objext"
 	done
 	LIBOBJS=$ac_libobjs
 
