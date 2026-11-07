@@ -6232,6 +6232,11 @@ else
   teststring=ABCD
 
   case $build_os in
+  minix*)
+    # MINIX has a small ARG_MAX; use a conservative 8 KiB limit
+    # instead of running the exponential argument-size probe.
+    lt_cv_sys_max_cmd_len=8192
+    ;;
   msdosdjgpp*)
     # On DJGPP, this test can blow up pretty badly due to problems in libc
     # (any single argument exceeding 2000 bytes causes a buffer overrun
