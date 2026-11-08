@@ -24214,6 +24214,27 @@ ac_clean_files=$ac_clean_files_save
 test $ac_write_fail = 0 ||
   as_fn_error $? "write failure creating $CONFIG_STATUS" "$LINENO" 5
 
+case $host_os in
+  minix*)
+    # MINIX's shell can hang in config.status's generic EXIT trap.
+    if $AWK '
+      /^as_fn_exit 0$/ {
+        print "rm -fr \"$ac_tmp\""
+        print "trap - 0"
+        found++
+      }
+      { print }
+      END { if (found != 1) exit 1 }
+    ' "$CONFIG_STATUS" >"$CONFIG_STATUS.tmp"; then
+      chmod +x "$CONFIG_STATUS.tmp" &&
+        mv -f "$CONFIG_STATUS.tmp" "$CONFIG_STATUS" ||
+        as_fn_error $? "cannot patch $CONFIG_STATUS" "$LINENO" 5
+    else
+      rm -f "$CONFIG_STATUS.tmp"
+      as_fn_error $? "cannot patch $CONFIG_STATUS" "$LINENO" 5
+    fi
+    ;;
+esac
 
 # configure is writing to config.log, and then calls config.status.
 # config.status does its own redirection, appending to config.log.
@@ -24239,4 +24260,16 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
+
+case $host_os in
+  minix*)
+    # The configure EXIT trap serializes the environment and may hang on MINIX.
+    ac_minix_exit_status=$?
+    rm -f core *.core core.conftest.* &&
+      rm -f -r conftest* confdefs* conf$$* $ac_clean_files ||
+      ac_minix_exit_status=$?
+    trap - 0
+    exit $ac_minix_exit_status
+    ;;
+esac
 
