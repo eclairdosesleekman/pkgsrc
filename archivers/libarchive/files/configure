@@ -21899,13 +21899,11 @@ esac
 ac_config_commands="$ac_config_commands mkdirs"
 
 
-case "$host_os" in
-  minix*)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping Autoconf cache serialization on MINIX" >&5
-$as_echo "$as_me: skipping Autoconf cache serialization on MINIX" >&6;}
+if test "$ac_minix_native" = yes; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping Autoconf cache serialization on native MINIX" >&5
+$as_echo "$as_me: skipping Autoconf cache serialization on native MINIX" >&6;}
     rm -f confcache
-    ;;
-  *)
+else
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -21991,8 +21989,7 @@ $as_echo "$as_me: not updating unwritable cache $cache_file" >&6;}
   fi
 fi
 rm -f confcache
-    ;;
-esac
+fi
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # Let make expand exec_prefix.
@@ -24246,6 +24243,8 @@ if test "$ac_minix_native" = yes; then
       chmod +x "$CONFIG_STATUS.tmp" &&
         mv -f "$CONFIG_STATUS.tmp" "$CONFIG_STATUS" ||
         as_fn_error $? "cannot patch $CONFIG_STATUS" "$LINENO" 5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: native MINIX config.status EXIT trap workaround installed" >&5
+        $as_echo "$as_me: native MINIX config.status EXIT trap workaround installed" >&6;}
     else
       rm -f "$CONFIG_STATUS.tmp"
       as_fn_error $? "cannot patch $CONFIG_STATUS" "$LINENO" 5
