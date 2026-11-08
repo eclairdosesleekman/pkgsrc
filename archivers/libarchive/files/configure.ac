@@ -1297,6 +1297,7 @@ if test "$ac_minix_native" = yes; then
       chmod +x "$CONFIG_STATUS.tmp" &&
         mv -f "$CONFIG_STATUS.tmp" "$CONFIG_STATUS" ||
         AC_MSG_ERROR([cannot patch $CONFIG_STATUS])
+      AC_MSG_NOTICE([native MINIX config.status EXIT trap workaround installed])
     else
       rm -f "$CONFIG_STATUS.tmp"
       AC_MSG_ERROR([cannot patch $CONFIG_STATUS])
