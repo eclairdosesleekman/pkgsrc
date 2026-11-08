@@ -84,6 +84,23 @@ AC_CONFIG_FILES([build/pkgconfig/libarchive.pc])
 # Check for host type
 AC_CANONICAL_HOST
 
+dnl Some 64-bit/native MINIX config.guess variants report an incomplete OS
+dnl component. The configure script itself runs on the build machine, so use
+dnl uname as a fallback for native MINIX detection. Do not override an
+dnl explicitly requested cross-build host.
+ac_minix_native=no
+case "`uname -s 2>/dev/null`" in
+  [Mm][Ii][Nn][Ii][Xx]*) ac_minix_native=yes ;;
+esac
+case "$build_os" in
+  minix*) ac_minix_native=yes ;;
+esac
+if test "$ac_minix_native" = yes; then
+  test -n "$build_alias" || build_os=minix
+  test -n "$host_alias" || host_os=minix
+  AC_MSG_NOTICE([native MINIX build detected (build_os=$build_os, host_os=$host_os)])
+fi
+
 dnl Compilation on mingw and Cygwin needs special Makefile rules
 inc_windows_files=no
 inc_cygwin_files=no
@@ -110,9 +127,9 @@ AC_LIBTOOL_WIN32_DLL
 
 dnl MINIX's conservative command length is half its 16 KiB ARG_MAX.
 dnl This cache variable prevents Libtool's exponential size probe.
-case "$build_os" in
-  minix*) lt_cv_sys_max_cmd_len=8192 ;;
-esac
+if test "$ac_minix_native" = yes; then
+  lt_cv_sys_max_cmd_len=8192
+fi
 
 dnl Keep the generated configure script's MINIX linker branch synchronized:
 dnl MINIX skips Libtool's GNU ld introspection and uses NetBSD ELF -shared.
@@ -1266,8 +1283,8 @@ dnl MINIX's shell can hang in the EXIT trap generated inside config.status.
 dnl Patch the generated script after it has been written: perform the normal
 dnl temporary-directory cleanup explicitly, then clear the successful-exit trap.
 AC_CONFIG_COMMANDS_POST([
-case $host_os in
-  minix*)
+if test "$ac_minix_native" = yes; then
+    AC_MSG_NOTICE([patching config.status exit trap for native MINIX])
     if $AWK '
       /^as_fn_exit 0$/ {
         print "rm -fr \"$ac_tmp\""
@@ -1284,8 +1301,7 @@ case $host_os in
       rm -f "$CONFIG_STATUS.tmp"
       AC_MSG_ERROR([cannot patch $CONFIG_STATUS])
     fi
-    ;;
-esac
+fi
 ])
 
 AC_OUTPUT
@@ -1293,13 +1309,11 @@ AC_OUTPUT
 dnl On MINIX, bypass Autoconf's parent configure EXIT trap as well. It dumps
 dnl the full shell environment to config.log and performs generic cleanup.
 dnl Reproduce the required file cleanup, then disable that trap on success.
-case $host_os in
-  minix*)
+if test "$ac_minix_native" = yes; then
     ac_minix_exit_status=$?
     rm -f core *.core core.conftest.* &&
       rm -f -r conftest* confdefs* conf$$* $ac_clean_files ||
       ac_minix_exit_status=$?
     trap - 0
     exit $ac_minix_exit_status
-    ;;
-esac
+fi
