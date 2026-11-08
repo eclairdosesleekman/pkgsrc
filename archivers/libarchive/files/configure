@@ -3619,6 +3619,22 @@ host_os=$*
 IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
+# Detect the native MINIX build environment even if an older config.guess
+# produced a non-MINIX OS component for this architecture.
+ac_minix_native=no
+case "`uname -s 2>/dev/null`" in
+  [Mm][Ii][Nn][Ii][Xx]*) ac_minix_native=yes ;;
+esac
+case "$build_os" in
+  minix*) ac_minix_native=yes ;;
+esac
+if test "$ac_minix_native" = yes; then
+  test -n "$build_alias" || build_os=minix
+  test -n "$host_alias" || host_os=minix
+  { $as_echo "$as_me:${as_lineno-$LINENO}: native MINIX build detected (build_os=$build_os, host_os=$host_os)" >&5
+    $as_echo "$as_me: native MINIX build detected (build_os=$build_os, host_os=$host_os)" >&6;}
+fi
+
 
 
 inc_windows_files=no
@@ -21883,13 +21899,11 @@ esac
 ac_config_commands="$ac_config_commands mkdirs"
 
 
-case "$host_os" in
-  minix*)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping Autoconf cache serialization on MINIX" >&5
-$as_echo "$as_me: skipping Autoconf cache serialization on MINIX" >&6;}
+if test "$ac_minix_native" = yes; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping Autoconf cache serialization on native MINIX" >&5
+$as_echo "$as_me: skipping Autoconf cache serialization on native MINIX" >&6;}
     rm -f confcache
-    ;;
-  *)
+else
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -21975,8 +21989,7 @@ $as_echo "$as_me: not updating unwritable cache $cache_file" >&6;}
   fi
 fi
 rm -f confcache
-    ;;
-esac
+fi
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # Let make expand exec_prefix.
@@ -24214,9 +24227,10 @@ ac_clean_files=$ac_clean_files_save
 test $ac_write_fail = 0 ||
   as_fn_error $? "write failure creating $CONFIG_STATUS" "$LINENO" 5
 
-case $host_os in
-  minix*)
+if test "$ac_minix_native" = yes; then
     # MINIX's shell can hang in config.status's generic EXIT trap.
+    { $as_echo "$as_me:${as_lineno-$LINENO}: patching config.status exit trap for native MINIX" >&5
+      $as_echo "$as_me: patching config.status exit trap for native MINIX" >&6;}
     if $AWK '
       /^as_fn_exit 0$/ {
         print "rm -fr \"$ac_tmp\""
@@ -24229,12 +24243,13 @@ case $host_os in
       chmod +x "$CONFIG_STATUS.tmp" &&
         mv -f "$CONFIG_STATUS.tmp" "$CONFIG_STATUS" ||
         as_fn_error $? "cannot patch $CONFIG_STATUS" "$LINENO" 5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: native MINIX config.status EXIT trap workaround installed" >&5
+        $as_echo "$as_me: native MINIX config.status EXIT trap workaround installed" >&6;}
     else
       rm -f "$CONFIG_STATUS.tmp"
       as_fn_error $? "cannot patch $CONFIG_STATUS" "$LINENO" 5
     fi
-    ;;
-esac
+fi
 
 # configure is writing to config.log, and then calls config.status.
 # config.status does its own redirection, appending to config.log.
@@ -24261,8 +24276,7 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
-case $host_os in
-  minix*)
+if test "$ac_minix_native" = yes; then
     # The configure EXIT trap serializes the environment and may hang on MINIX.
     ac_minix_exit_status=$?
     rm -f core *.core core.conftest.* &&
@@ -24270,6 +24284,5 @@ case $host_os in
       ac_minix_exit_status=$?
     trap - 0
     exit $ac_minix_exit_status
-    ;;
-esac
+fi
 
