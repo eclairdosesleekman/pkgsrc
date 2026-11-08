@@ -1262,4 +1262,44 @@ dnl complete shell environment using set/sed/sort; it is unnecessary when
 dnl no persistent configure cache is requested and has caused bootstrap
 dnl hangs on the MINIX shell. Keep the generated configure guard in sync.
 
+dnl MINIX's shell can hang in the EXIT trap generated inside config.status.
+dnl Patch the generated script after it has been written: perform the normal
+dnl temporary-directory cleanup explicitly, then clear the successful-exit trap.
+AC_CONFIG_COMMANDS_POST([
+case $host_os in
+  minix*)
+    if $AWK '
+      /^as_fn_exit 0$/ {
+        print "rm -fr \"$ac_tmp\""
+        print "trap - 0"
+        found++
+      }
+      { print }
+      END { if (found != 1) exit 1 }
+    ' "$CONFIG_STATUS" >"$CONFIG_STATUS.tmp"; then
+      chmod +x "$CONFIG_STATUS.tmp" &&
+        mv -f "$CONFIG_STATUS.tmp" "$CONFIG_STATUS" ||
+        AC_MSG_ERROR([cannot patch $CONFIG_STATUS])
+    else
+      rm -f "$CONFIG_STATUS.tmp"
+      AC_MSG_ERROR([cannot patch $CONFIG_STATUS])
+    fi
+    ;;
+esac
+])
+
 AC_OUTPUT
+
+dnl On MINIX, bypass Autoconf's parent configure EXIT trap as well. It dumps
+dnl the full shell environment to config.log and performs generic cleanup.
+dnl Reproduce the required file cleanup, then disable that trap on success.
+case $host_os in
+  minix*)
+    ac_minix_exit_status=$?
+    rm -f core *.core core.conftest.* &&
+      rm -f -r conftest* confdefs* conf$$* $ac_clean_files ||
+      ac_minix_exit_status=$?
+    trap - 0
+    exit $ac_minix_exit_status
+    ;;
+esac
