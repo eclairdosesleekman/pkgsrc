@@ -1256,4 +1256,10 @@ esac
 AC_CONFIG_COMMANDS([mkdirs],
 		   [mkdir -p libarchive/test tar/test cat/test cpio/test])
 
+dnl The distributed generated configure script skips Autoconf's final
+dnl confcache serialization pipeline on MINIX. That pipeline enumerates the
+dnl complete shell environment using set/sed/sort; it is unnecessary when
+dnl no persistent configure cache is requested and has caused bootstrap
+dnl hangs on the MINIX shell. Keep the generated configure guard in sync.
+
 AC_OUTPUT
