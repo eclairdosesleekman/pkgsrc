@@ -21883,6 +21883,13 @@ esac
 ac_config_commands="$ac_config_commands mkdirs"
 
 
+case "$host_os" in
+  minix*)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: skipping Autoconf cache serialization on MINIX" >&5
+$as_echo "$as_me: skipping Autoconf cache serialization on MINIX" >&6;}
+    rm -f confcache
+    ;;
+  *)
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -21968,6 +21975,8 @@ $as_echo "$as_me: not updating unwritable cache $cache_file" >&6;}
   fi
 fi
 rm -f confcache
+    ;;
+esac
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # Let make expand exec_prefix.
